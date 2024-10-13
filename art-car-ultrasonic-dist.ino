@@ -10,20 +10,19 @@
 // * added turning off of arduino's interrupt handling during sound return measurement
 // * added Bounce2 for two buttons to switch rear/front & in/cm
 //   https://github.com/thomasfredericks/Bounce2/blob/master/examples/more/change/change.ino
-// * added dht22 sensor & temp & humidity speed of sound correction
-// * print out temp in the place of sound sensor
+// * added dht22 sensor with temp & humidity speed of sound correction
+// * print out temp in the place of sound sensor icon
 
+// upir's orig URLs
 // youtube channel: https://www.youtube.com/upir_upir
 // youtube full video: https://youtu.be/gg08H-6Z1Lo
 // Github: https://github.com/upiir/arduino_parking_sensor
 // full simulation https://wokwi.com/projects/348388602879672914
 
+// useful links:
 // u8g fonts (fonts available for u8g library): https://nodemcu-build.com/u8g-fonts.php
 // u8g documentation: https://github.com/olikraus/u8glib/wiki/userreference
 // image2cpp (convert images into C code): https://javl.github.io/image2cpp/
-
-// useful links:
-// u8g documentation: https://github.com/olikraus/u8glib/wiki/userreference
 
 #include "U8glib.h"
 #include <Bounce2.h>
@@ -431,11 +430,15 @@ static bool measure_environment(float *tempC, float *humidity) {
 void loop() {
   //Every 4 seconds
   if ((millis() - loopMillis) > 4000) {
-    //do this every 4 seconds,  ~100 loops
+    //do this every 4 seconds,  60 to 100 loops
     if (measure_environment(&tempC, &humidity) == true) {
       tempF = (tempC * 9.0 / 5.0) + 32.0;
       tempCint = int(tempC + 0.5);
       tempFint = int(tempF + 0.5);
+      // Speed sound with temp, best I could find was: (20.05 * sqrt(273.16 + tempC))
+      // then went online and found this, then did a 2d linear fit for my formal below, error is +/-0.07% in range
+      // Speed sound calculator: http://resource.npl.co.uk/acoustics/techguides/speedair/
+      // valid over the temp range 0 to 30C temp (273.15 - 303.15 K) and for the pressure range 75 - 102 kPa
       soundSpeed = (20.05 * sqrt(273.16 + tempC)) + (0.0006545 * humidity + 0.00475) * tempC + (0.001057 * humidity + 0.07121);
     }
     if (debug) {
