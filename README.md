@@ -16,5 +16,7 @@ full simulation https://wokwi.com/projects/348388602879672914
 
 
 u8g fonts (fonts available for u8g library): https://nodemcu-build.com/u8g-fonts.php
+
 u8g documentation: https://github.com/olikraus/u8glib/wiki/userreference
+
 image2cpp (convert images into C code): https://javl.github.io/image2cpp/
